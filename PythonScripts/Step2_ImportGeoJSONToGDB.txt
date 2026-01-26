@@ -1,0 +1,89 @@
+# ---  Step 1: Import all the tools this script needs ---
+import geopandas as gpd
+from datetime import datetime
+import numpy as np
+import os, gc
+
+# === Step 2: User inputs ===
+input_folder = "C:\\ZespriWorkspace\\Data\\Sample_data"
+output_GDB = "C:\\ZespriWorkspace\\Data\\test_GPSIT_NZTM.gdb"
+log_folder = r"C:\\ZespriWorkspace\\logs\\"
+
+# --- Create output + log folders if missing ---
+os.makedirs(log_folder, exist_ok=True)
+
+# --- Create log file ---
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+log_path = os.path.join(log_folder, f"ImportGeoJSON2GDB_log_{timestamp}.txt")
+
+def log(msg):
+    print(msg)
+    with open(log_path, "a", encoding="utf-8") as log_file:
+        log_file.write(msg + "\n")
+
+log(f"Log started: {datetime.now()}")
+log(f"Input Folder: {input_folder}")
+log(f"Output GDB: {output_GDB}")
+
+
+# --- Step 3: Find and process each GeoJSON file in the input folder---
+# --- Find all GeoJSON files in your input folder ---
+input_files = [f for f in os.listdir(input_folder) if f.lower().endswith(".geojson")]
+log(f"Found {len(input_files)} GeoJSON file(s): {input_files}")
+print(input_files)
+
+for file_name in input_files:
+    
+    input_path = os.path.join(input_folder, file_name)
+    layer_name = os.path.splitext(file_name)[0]
+    log(f"\nProcessing: {file_name}")
+
+    gdf = gpd.read_file(input_path)
+
+    log(f" - Number of features found in file {file_name}: {len(gdf)} ")
+    
+
+    # --- Step 4: Check if there are null values in the kpin and geometry columns and drop the affected rows
+    gdf['kpin'] = gdf['kpin'].replace('',np.nan)
+    gdf = gdf.dropna(subset=['kpin'])
+    
+    # Check if there are null values in the geometry column and drop the rows
+    gdf['geometry'] = gdf['geometry'].replace('',np.nan)
+    gdf = gdf.dropna(subset=['geometry']) 
+
+    column_name_to_check = 'Geometry_Type'
+    if column_name_to_check not in gdf.columns:
+        gdf['Geometry_Type'] = gdf.geometry.geom_type
+    
+    
+    # --- Step 5: Export input features to a layer in the output GDB ---
+    uniqueGeoTypes = gdf.geometry.geom_type.unique().tolist()
+
+    for geoType in uniqueGeoTypes:
+        if uniqueGeoTypes.index(geoType) == 0:
+           
+            writeMode = 'w'
+            print(geoType)
+            print(writeMode)
+            gdf_filtered = gdf[gdf['Geometry_Type'] == geoType]
+            
+            gdf_filtered.to_file(output_GDB, layer=layer_name, driver="OpenFileGDB",mode=writeMode)
+            del gdf_filtered
+            
+        else:
+            writeMode = 'a'
+            print(geoType)
+            print(writeMode)
+            gdf_filtered = gdf[gdf['Geometry_Type'] == geoType].drop(columns = ['OBJECTID'])
+            
+            gdf_filtered.to_file(output_GDB, layer=layer_name, driver="OpenFileGDB", mode=writeMode)
+            del gdf_filtered
+
+    log(" - In file " + file_name + ": "+str(len(gdf))
+        + " overlapping feature(s) were exported to layer "+ os.path.join(output_GDB, layer_name))
+    del gdf
+
+    gc.collect()
+
+log("\nAll done! All GeoJSON files processed and saved successfully.")
+log(f"Log file saved to: {log_path}")

@@ -1,0 +1,84 @@
+# ---  Step 1: Import all the tools this script needs ---
+import geopandas as gpd
+from datetime import datetime
+import os, gc
+
+
+# === Step 2: User inputs ===
+input_folder = r"C:\\ZespriWorkspace\\Data\\Sample_data"
+output_GDB = r"C:\\ZespriWorkspace\\Data\\GeometryValidation_GPSIT.gdb"
+log_folder = r"C:\\ZespriWorkspace\\logs\\"
+
+# --- Create output + log folders if missing ---
+os.makedirs(log_folder, exist_ok=True)
+
+# --- Create log file ---
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+log_path = os.path.join(log_folder, f"GeometryValidation_log_{timestamp}.txt")
+
+def log(msg):
+    print(msg)
+    with open(log_path, "a", encoding="utf-8") as log_file:
+        log_file.write(msg + "\n")
+
+log(f"Log started: {datetime.now()}")
+log(f"Input Folder: {input_folder}")
+log(f"Output GDB: {output_GDB}")
+
+
+# --- Step 3: Main loop to validate geometry in each layer ---
+
+# ---  Find all GeoJSON files in input folder --- 
+input_files = [f for f in os.listdir(input_folder) if f.lower().endswith(".geojson")]
+log(f"Found {len(input_files)} GeoJSON file(s): {input_files}")
+print(input_files)
+
+# ---  Load and process each layer --- 
+for file_name in input_files:
+
+    input_path = os.path.join(input_folder, file_name)
+    base_name = os.path.splitext(file_name)[0]
+    log(f"\nProcessing: {file_name}")
+    
+    gdf = gpd.read_file(input_path)
+
+    # --- Step 4: Validate geometry ---
+    gdf['Validation'] = gdf.geometry.is_valid
+    gdf['ValidationComment'] = gdf.geometry.is_valid_reason()
+
+    
+    # --- Step 5: Export features with invalid geometry into output by GDB
+    gdf = gdf[gdf['Validation'] == False]
+
+    if len(gdf) == 0:
+        log(" - No invalid geometry detected in GeoJSON file " + file_name)  
+
+    uniqueGeoTypes = gdf.geometry.geom_type.unique().tolist()
+    
+    output_layername = 'InvalidGeometry_' + base_name
+    
+    for geoType in uniqueGeoTypes:
+
+        if uniqueGeoTypes.index(geoType) == 0:
+            writeMode = 'w'
+            gdf_filtered = gdf[gdf.geometry.geom_type == geoType]
+            gdf_filtered.to_file(output_GDB, layer= output_layername, driver="OpenFileGDB",mode=writeMode)
+            del gdf_filtered
+
+        else:
+            writeMode = 'a'
+            gdf_filtered = gdf[gdf.geometry.geom_type == geoType].drop(columns = ['OBJECTID'])
+            gdf_filtered.to_file(output_GDB, layer=output_layername, driver="OpenFileGDB", mode=writeMode)
+            del gdf_filtered
+
+
+        log(" - In file " + file_name + ": "+str(len(gdf)) 
+            + " feature(s) with invalid geometry were exported to layer "
+            + os.path.join(output_GDB, base_name))
+
+    del gdf
+    gc.collect()
+        
+
+log("\nAll done! All GeoJSON files processed.")
+log(f"Log finished: {datetime.now()}")

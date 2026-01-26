@@ -1,0 +1,108 @@
+# ---  Step 1: Import all the tools this script needs ---
+import geopandas as gpd
+from datetime import datetime
+import os, re, gc
+
+
+# --- Step 2: User inputs ---
+input_folder = r"C:\\ZespriWorkspace\\Data\\Sample_data"
+output_GDB = r"C:\\ZespriWorkspace\\Data\\AttributesValidation_GPSIT.gdb"
+log_folder = r"C:\\ZespriWorkspace\\logs\\"
+
+# --- Create output + log folders if missing ---
+os.makedirs(log_folder, exist_ok=True)
+
+# --- Create log file ---
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+log_path = os.path.join(log_folder, f"AttributesValidation_log_{timestamp}.txt")
+
+def log(msg):
+    print(msg)
+    with open(log_path, "a", encoding="utf-8") as log_file:
+        log_file.write(msg + "\n")
+
+log(f"Log started: {datetime.now()}")
+log(f"Input folder: {input_folder}")
+log(f"Output GDB: {output_GDB}")
+
+# --- Find all GeoJSON files in your input folder ---
+geojson_files = [f for f in os.listdir(input_folder) if f.lower().endswith(".geojson")]
+log(f"Found {len(geojson_files)} GeoJSON file(s): {geojson_files}")
+
+
+# --- Step 3: Main loop to check special characters in each GeoJSON file ---
+
+for file_name in geojson_files:
+    
+    input_path = os.path.join(input_folder, file_name)
+    base_name = os.path.splitext(file_name)[0]
+    log(f"\nProcessing: {file_name}")
+
+    gdf = gpd.read_file(input_path)
+
+    gdf['ContainSpecialCharacters'] = False
+    gdf['CommentOnSpecialCharacters'] = ''
+
+    # ---Step 4: select the columns of text string-type to check.
+    string_columns = []
+    # Iterate through columns and check dtype
+    for col in gdf.columns:
+        if gdf[col].dtype == 'object':
+            string_columns.append(col)
+            
+    # --- Step 5: detect special characters for each row in the select columns.
+    for index, row in gdf.iterrows():
+        columns_flagged = []
+        
+        for col_name in string_columns:
+            
+            if gdf.at[index, col_name] is not None:
+                if re.search(r"\r\n|\n", gdf.at[index, col_name]):
+                    columns_flagged.append(col_name)
+ 
+    # --- Step 6: flag the rows having special characters and comment on what have been found in the columns.
+        if len(columns_flagged) > 0:
+            
+            gdf.loc[index, 'ContainSpecialCharacters'] = True
+            gdf.loc[index, 'CommentOnSpecialCharacters'] = "Special characters contained in the following attributes: " + ", ".join(columns_flagged) + "."
+            
+            
+   # --- Step 7: Export features with special characters in attributes into output GDB
+    
+    gdf = gdf[gdf['ContainSpecialCharacters'] == True]
+
+    if len(gdf) == 0:
+        log(" - No attributes with special characters in file " + file_name)
+    else:
+
+        uniqueGeoTypes = gdf.geometry.geom_type.unique().tolist()
+    
+        
+        for geoType in uniqueGeoTypes:
+    
+            if uniqueGeoTypes.index(geoType) == 0:
+                writeMode = 'w'
+                gdf_filtered = gdf[gdf.geometry.geom_type == geoType]
+                gdf_filtered.to_file(output_GDB, layer= 'AttributesCheck_'+base_name, driver="OpenFileGDB",mode=writeMode)
+    
+            else:
+                writeMode = 'a'
+                gdf_filtered = gdf[gdf.geometry.geom_type == geoType].drop(columns = ['OBJECTID'])
+                gdf_filtered.to_file(output_GDB, layer='AttributesCheck_' + base_name, driver="OpenFileGDB", mode=writeMode)
+
+        
+
+
+        log(" - In file " + file_name + ": "+str(len(gdf)) 
+            + " feature(s) with special characters in attributes were exported to layer "
+            + os.path.join(output_GDB, base_name))
+        
+        del gdf
+        del gdf_filtered
+        gc.collect()
+
+
+log("\nAll done! All polygon layers processed.")
+log(f"Log finished: {datetime.now()}")
+    
+   

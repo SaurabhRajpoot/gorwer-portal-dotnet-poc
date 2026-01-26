@@ -1,0 +1,128 @@
+# ---  Step 1: Import all the tools this script needs ---
+import geopandas as gpd
+from datetime import datetime
+import os, gc
+
+
+# === Step 2: User inputs ===
+input_folder = r"C:\\ZespriWorkspace\\Data\\Sample_data"
+output_GDB = r"C:\\ZespriWorkspace\\Data\\GeometryValidation_GPSIT.gdb"
+log_folder = r"C:\\ZespriWorkspace\\logs\\"
+property_type_check = ['blocks']
+overlapping_tolerance = 0.0001 # Unit:m2. overlapping areas smaller than this tolerance will not be flagged.
+
+# --- Create output + log folders if missing ---
+os.makedirs(log_folder, exist_ok=True)
+
+# --- Create log file ---
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+log_path = os.path.join(log_folder, f"OverlappingCheck_log_{timestamp}.txt")
+
+def log(msg):
+    print(msg)
+    with open(log_path, "a", encoding="utf-8") as log_file:
+        log_file.write(msg + "\n")
+
+log(f"Log started: {datetime.now()}")
+log(f"Input Folder: {input_folder}")
+log(f"Output GDB: {output_GDB}")
+
+
+# --- Find all GeoJSON files in input folder ---
+input_files = [f for f in os.listdir(input_folder) if f.lower().endswith(".geojson")]
+geojson_files = [input_file for input_file in input_files if os.path.splitext(input_file)[0] in property_type_check]
+log(f"Found {len(geojson_files)} GeoJSON file(s): {geojson_files}")
+
+
+# --- Step 3: Main loop to validate geometry in each layer ---
+
+for file_name in geojson_files:
+    
+    input_path = os.path.join(input_folder, file_name)
+    base_name = os.path.splitext(file_name)[0]
+    log(f"\nProcessing: {file_name}")
+
+    
+    gdf = gpd.read_file(input_path)
+
+    gdf = gdf[(gdf.geometry.geom_type == 'MultiPolygon') | (gdf.geometry.geom_type == 'Polygon')]
+
+    if len(gdf) == 0:
+        log(" - No polygons found in file " + file_name)
+  
+
+    # --- Step 4: detect overlapping polygons ---
+    else:
+                
+        gdf_tmp = gdf.reset_index(names=['NewIndex'])
+        gdf_1 = gdf.reset_index(names=['NewIndex_1'])
+        gdf_1 = gdf_1[['NewIndex_1','geometry']]
+        gdf_2 = gdf.reset_index(names=['NewIndex_2'])
+        gdf_2 = gdf_2[['NewIndex_2', 'geometry']]
+        
+        gdf_overlap = gpd.overlay(gdf_1,gdf_2, how='intersection', keep_geom_type=False)
+        
+        gdf_overlap = gdf_overlap[(gdf_overlap['NewIndex_1'] != gdf_overlap['NewIndex_2'])
+                                    & ((gdf_overlap.geometry.geom_type == 'MultiPolygon') | (gdf_overlap.geometry.geom_type == 'Polygon'))
+                                    & (gdf_overlap.area >= overlapping_tolerance)]
+
+
+        # --- Step 5: exporting overlapping areas ---
+        if len(gdf_overlap) > 0:
+            
+            gdf_overlap = (gdf_overlap.drop_duplicates(subset=['NewIndex_1']))[['NewIndex_1', 'geometry']]
+            output_layername = 'OverlappingAreas_' + base_name
+
+            uniqueGeoTypes = gdf_overlap.geometry.geom_type.unique().tolist()
+
+            for geoType in uniqueGeoTypes:
+                if uniqueGeoTypes.index(geoType) == 0:
+                    writeMode = 'w'
+                    gdf_filtered = gdf_overlap[gdf_overlap.geometry.geom_type == geoType]
+                    gdf_filtered.to_file(output_GDB, layer= output_layername, driver="OpenFileGDB",mode=writeMode)
+                    del gdf_filtered
+
+                else:
+                    writeMode = 'a'
+                    gdf_filtered = gdf_overlap[gdf_overlap.geometry.geom_type == geoType]
+                    gdf_filtered.to_file(output_GDB, layer=output_layername, driver="OpenFileGDB", mode=writeMode)
+                    del gdf_filtered
+        
+        
+            log(" - In file " + file_name + ": "+str(len(gdf_overlap))+ " overlapping area(s) were exported to layer "+ os.path.join(output_GDB, output_layername))
+
+            # --- Step 6: exporting overlapping features ---
+            output_layername = 'OverlappingFeatures_' + base_name
+            gdf_overlap = gdf_overlap[['NewIndex_1']]
+            gdf_merged = gdf_tmp.merge(gdf_overlap, left_on='NewIndex', right_on='NewIndex_1', how='inner')
+
+            uniqueGeoTypes = gdf_merged.geometry.geom_type.unique().tolist()
+
+            for geoType in uniqueGeoTypes:
+                if uniqueGeoTypes.index(geoType) == 0:
+                    writeMode = 'w'
+                    gdf_filtered = gdf_merged[gdf_merged.geometry.geom_type == geoType]
+                    gdf_filtered.to_file(output_GDB, layer= output_layername, driver="OpenFileGDB",mode=writeMode)
+                    del gdf_filtered
+
+                else:
+                    writeMode = 'a'
+                    gdf_filtered = gdf_merged[gdf_merged.geometry.geom_type == geoType].drop(columns = ['OBJECTID'])
+                    gdf_filtered.to_file(output_GDB, layer=output_layername, driver="OpenFileGDB", mode=writeMode)
+                    del gdf_filtered
+        
+        
+            log(" - In file " + file_name + ": "+str(len(gdf_merged))+ " overlapping feature(s) were exported to layer "+ os.path.join(output_GDB, output_layername))
+            del gdf_overlap
+            
+        del gdf_tmp
+        del gdf_1
+        del gdf_2
+        
+    del gdf
+    
+    gc.collect()
+
+log("\nAll done! All GeoJSON files processed and saved successfully.")
+log(f"Log file saved to: {log_path}")
+            

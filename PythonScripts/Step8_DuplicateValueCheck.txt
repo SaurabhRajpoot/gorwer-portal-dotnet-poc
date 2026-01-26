@@ -1,0 +1,85 @@
+# ---  Step 1: Import all the tools this script needs ---
+import geopandas as gpd
+import pandas as pd
+from datetime import datetime
+import os, gc
+
+
+# === Step 2: User inputs ===
+input_folder = r"C:\\ZespriWorkspace\\Data\\Sample_data"
+output_GDB = r"C:\\ZespriWorkspace\\Data\\AttributesValidation_GPSIT.gdb"
+log_folder = r"C:\\ZespriWorkspace\\logs\\"
+property_type_check = ['KPIN_masks','KPIN_point']
+attributes_check = ['kpin']
+
+# --- Create output + log folders if missing ---
+os.makedirs(log_folder, exist_ok=True)
+
+# --- Create log file ---
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+log_path = os.path.join(log_folder, f"DuplicateAttributeValueCheck_log_{timestamp}.txt")
+
+def log(msg):
+    print(msg)
+    with open(log_path, "a", encoding="utf-8") as log_file:
+        log_file.write(msg + "\n")
+
+log(f"Log started: {datetime.now()}")
+log(f"Input Folder: {input_folder}")
+log(f"Output GDB: {output_GDB}")
+
+
+# --- Step 3: Find all GeoJSON files in input folder and loop to validate KPIN values in each file ---
+
+# --- Find all GeoJSON files in your input folder ---
+input_files = [f for f in os.listdir(input_folder) if f.lower().endswith(".geojson")]
+
+geojson_files = [input_file for input_file in input_files if os.path.splitext(input_file)[0] in property_type_check]
+log(f"Found {len(geojson_files)} GeoJSON file(s): {geojson_files}")
+
+
+# --- Main loop to validate KPIN values in each GeoJSON file ---
+
+for file_name in geojson_files:
+    
+    input_path = os.path.join(input_folder, file_name)
+    base_name = os.path.splitext(file_name)[0]
+    log(f"\nProcessing: {file_name}")
+    
+    gdf = gpd.read_file(input_path)
+
+    
+    # --- Step 4: detect features having duplicated values in each user-defined attibute ---
+    for attribute in attributes_check:
+        duplicated_check = gdf[attribute].duplicated(keep=False)
+        duplicated_rows = gdf[duplicated_check]      
+        
+
+        # --- Step 5: exporting features having duplicated values in the specific attibute---
+        output_layername = 'DuplicatedAttribute_' + base_name + '_'+attribute
+
+        uniqueGeoTypes = duplicated_rows.geometry.geom_type.unique().tolist()      
+
+        for geoType in uniqueGeoTypes:
+            if uniqueGeoTypes.index(geoType) == 0:
+                writeMode = 'w'
+                gdf_filtered = duplicated_rows[duplicated_rows.geometry.geom_type == geoType]
+                gdf_filtered.to_file(output_GDB, layer= output_layername, driver="OpenFileGDB",mode=writeMode)
+                del gdf_filtered
+
+            else:
+                writeMode = 'a'
+                gdf_filtered = duplicated_rows[duplicated_rows.geometry.geom_type == geoType].drop(columns = ['OBJECTID'])
+                gdf_filtered.to_file(output_GDB, layer=output_layername, driver="OpenFileGDB", mode=writeMode)
+                del gdf_filtered
+
+        log(" - In file " + file_name + ": "+str(len(duplicated_rows))
+            + " feature(s) having duplicated values in " + attribute 
+            + " were exported to layer "+ os.path.join(output_GDB, output_layername))
+            
+
+        del duplicated_rows
+    del gdf
+    gc.collect()
+log("\nAll done! All GeoJSON files processed and saved successfully.")
+log(f"Log file saved to: {log_path}") 

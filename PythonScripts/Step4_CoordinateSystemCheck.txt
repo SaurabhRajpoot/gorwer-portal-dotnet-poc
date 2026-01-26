@@ -1,0 +1,56 @@
+# === Step 1: Import all the tools this script needs ===
+import os
+import geopandas as gpd
+from datetime import datetime
+
+# === Step 2: User Inputs ===
+input_folder = r"C:\\ZespriWorkspace\\Data\\Sample_data"
+log_folder = r"C:\\ZespriWorkspace\\logs\\"
+
+# --- Ensure log folder exists ---
+os.makedirs(log_folder, exist_ok=True)
+
+# --- Create ONE combined log file ---
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+log_path = os.path.join(log_folder, f"CoordinateSystemSummary_{timestamp}.txt")
+
+def log(msg):
+    print(msg)
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(msg + "\n")
+
+log(f"=== Combined Coordinate System Check Log ===")
+log(f"Created: {datetime.now()}")
+log("============================================\n")
+
+# === Step 3: Find GeoJSON Files ===
+geojson_files = [f for f in os.listdir(input_folder) if f.lower().endswith(".geojson")]
+log(f"Found {len(geojson_files)} GeoJSON file(s).\n")
+
+# === Step 3.1: Process all GeoJSON files ===
+for file_name in geojson_files:
+    input_path = os.path.join(input_folder, file_name)
+    base_name = os.path.splitext(file_name)[0]
+
+    log(f"--- Checking: {file_name} ---")
+
+    try:
+        gdf = gpd.read_file(input_path)
+
+        # Detect CRS
+        if gdf.crs is None:
+            log("CRS: None (no coordinate system defined!)\n")
+        else:
+            log(f"CRS: {gdf.crs}")
+
+            # Try to get EPSG code
+            try:
+                epsg = gdf.crs.to_epsg()
+                log(f"EPSG Code: {epsg}\n")
+            except:
+                log("EPSG Code: Could not convert CRS to EPSG.\n")
+
+    except Exception as e:
+        log(f"ERROR reading file: {e}\n")
+
+log("=== Done. All files processed. ===")
