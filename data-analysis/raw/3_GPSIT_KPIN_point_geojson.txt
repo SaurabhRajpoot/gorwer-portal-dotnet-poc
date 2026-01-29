@@ -1,0 +1,126 @@
+{
+  "type": "FeatureCollection",
+  "name": "KPIN_point",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::2193"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "properties": {
+        "OBJECTID": 1,
+        "kpin": "2704",
+        "propertyname": "Beach Road",
+        "roadnumber": "210",
+        "road": "Beach Road",
+        "ruraldelivery": "RD 2",
+        "suburb": "",
+        "town": "Katikati",
+        "region": "Bay of Plenty",
+        "country": "New Zealand",
+        "postcode": "3178",
+        "supplyregion": "Katikati",
+        "statisticalregion": "Katikati",
+        "territoriallocalauthority": "Western Bay of Plenty District",
+        "regionalcouncil": "Bay of Plenty Region",
+        "valuationnumber": "06817-71300-",
+        "titles": "SA1108/100",
+        "accessnotes": null,
+        "elevation_gps": 5,
+        "created_date": 1557689140161,
+        "last_edited_date": 1747019157233,
+        "globalid": "{BEA43A9B-FA74-42AA-B0FC-FC61741018D7}",
+        "VerifiedAddress": "True",
+        "ZespriActive": "Yes",
+        "GoogleMapsLink": "https://www.google.com/maps/dir//-37.55123188514905,175.94154210735923"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1859835.7581000002,
+          5839822.93
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "properties": {
+        "OBJECTID": 2,
+        "kpin": "9341",
+        "propertyname": "Baaj Orchard",
+        "roadnumber": "193",
+        "road": "Busby Road",
+        "ruraldelivery": "RD 3",
+        "suburb": "",
+        "town": "Katikati",
+        "region": "Bay of Plenty",
+        "country": "New Zealand",
+        "postcode": "3170",
+        "supplyregion": "Katikati",
+        "statisticalregion": "Aongatete",
+        "territoriallocalauthority": "Western Bay of Plenty District",
+        "regionalcouncil": "Bay of Plenty Region",
+        "valuationnumber": "06809-11900-",
+        "titles": "481664",
+        "accessnotes": null,
+        "elevation_gps": 43,
+        "created_date": 1557689169064,
+        "last_edited_date": 1747019157233,
+        "globalid": "{B5123094-BFD0-4572-8A1A-4446C0F636BD}",
+        "VerifiedAddress": "True",
+        "ZespriActive": "Yes",
+        "GoogleMapsLink": "https://www.google.com/maps/dir//-37.555669576638856,175.89295901908704"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1855461.7296000002,
+          5839093.6936
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 741,
+      "properties": {
+        "OBJECTID": 741,
+        "kpin": "5142",
+        "propertyname": "Barnlees Lochhead",
+        "roadnumber": "128A",
+        "road": "Lochhead Road",
+        "ruraldelivery": "RD 6",
+        "suburb": "",
+        "town": "Tauranga",
+        "region": "Bay of Plenty",
+        "country": "New Zealand",
+        "postcode": "3176",
+        "supplyregion": "Tauranga",
+        "statisticalregion": "Te Puna",
+        "territoriallocalauthority": "Western Bay of Plenty District",
+        "regionalcouncil": "Bay of Plenty Region",
+        "valuationnumber": "06829-46001-",
+        "titles": "423708",
+        "accessnotes": null,
+        "elevation_gps": 36,
+        "created_date": 1761709095807,
+        "last_edited_date": 1761709095807,
+        "globalid": "{9109BE4B-171D-40E9-A12C-A60567BDE79E}",
+        "VerifiedAddress": "True",
+        "ZespriActive": "Yes",
+        "GoogleMapsLink": "https://www.google.com/maps/dir//-37.6750256733829,176.08873664655042"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1872308.1438999996,
+          5825497.3291
+        ]
+      }
+    }
+  ]
+}

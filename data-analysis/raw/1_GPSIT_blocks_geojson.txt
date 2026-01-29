@@ -1,0 +1,391 @@
+{
+  "type": "FeatureCollection",
+  "name": "blocks",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::2193"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "properties": {
+        "OBJECTID": 1,
+        "blockid": "948588",
+        "name": "4",
+        "surveydate": 1644452794792,
+        "surveyed": "Yes",
+        "method": "RTK",
+        "numberofrows": 24,
+        "structuretype": "Pergola",
+        "growmethod": "CK",
+        "blocklayout": "Opposing Female",
+        "coverstatus": "Uncovered",
+        "coverdate": 1407801600000,
+        "organicstatus": null,
+        "varietyid": 69,
+        "varietynameprivate": "SunGold",
+        "varietynamepublic": "SunGold",
+        "varietynamepublicshort": "G3",
+        "graftdate": 1341187200000,
+        "notchvarietyid": null,
+        "notchvarietynameprivate": null,
+        "notchvarietynamepublic": null,
+        "notchvarietynamepublicshort": null,
+        "notchvarietygraftdate": null,
+        "symbology": "GA",
+        "latitudedms": "37°49'21.93\"S",
+        "longitudedms": "176°20'11.32\"E",
+        "latitudedd": "-37.82275848138564",
+        "longitudedd": "176.33647844686118",
+        "areasm": "14566",
+        "areahectares": "1.46",
+        "supplyarea": null,
+        "category": "Kiwifruit",
+        "productionstatus": "Producing",
+        "startdate": 1647373642784,
+        "grafttype": null,
+        "globalid": "{726AF927-25CE-4526-937A-C151E2F3496B}",
+        "created_date": 1647373644200,
+        "last_edited_date": 1747101907140,
+        "varietyedi": "GA",
+        "notchvarietyedi": null,
+        "propertyname": "Neeworra Orchards",
+        "kpin": "5550",
+        "Shape_Length": 490.0141074666113,
+        "Shape_Area": 14566.449042063356
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1893703.4784000004,
+              5808522.2146
+            ],
+            [
+              1893768.1782,
+              5808654.0687
+            ],
+            [
+              1893676.2407999998,
+              5808693.1481
+            ],
+            [
+              1893674.5094999997,
+              5808693.8285
+            ],
+            [
+              1893612.9044000003,
+              5808568.4625
+            ],
+            [
+              1893614.4543000003,
+              5808567.663
+            ],
+            [
+              1893703.4784000004,
+              5808522.2146
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "properties": {
+        "OBJECTID": 2,
+        "blockid": "948587",
+        "name": "3",
+        "surveydate": 1644452794792,
+        "surveyed": "Yes",
+        "method": "RTK",
+        "numberofrows": 9,
+        "structuretype": "Pergola",
+        "growmethod": "CK",
+        "blocklayout": "Opposing Female",
+        "coverstatus": "Uncovered",
+        "coverdate": 1407801600000,
+        "organicstatus": null,
+        "varietyid": 69,
+        "varietynameprivate": "SunGold",
+        "varietynamepublic": "SunGold",
+        "varietynamepublicshort": "G3",
+        "graftdate": 1341187200000,
+        "notchvarietyid": null,
+        "notchvarietynameprivate": null,
+        "notchvarietynamepublic": null,
+        "notchvarietynamepublicshort": null,
+        "notchvarietygraftdate": null,
+        "symbology": "GA",
+        "latitudedms": "37°49'22.48\"S",
+        "longitudedms": "176°20'14.64\"E",
+        "latitudedd": "-37.82291075958122",
+        "longitudedd": "176.33739867520288",
+        "areasm": "5587",
+        "areahectares": "0.56",
+        "supplyarea": null,
+        "category": "Kiwifruit",
+        "productionstatus": "Producing",
+        "startdate": 1647373642785,
+        "grafttype": null,
+        "globalid": "{EEBC6744-FD05-4939-9BDD-D56A2C64F151}",
+        "created_date": 1647373644200,
+        "last_edited_date": 1747101907140,
+        "varietyedi": "GA",
+        "notchvarietyedi": null,
+        "propertyname": "Neeworra Orchards",
+        "kpin": "5550",
+        "Shape_Length": 368.58879003812405,
+        "Shape_Area": 5587.437626028812
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1893777.8139000004,
+              5808649.9431
+            ],
+            [
+              1893768.1782,
+              5808654.0687
+            ],
+            [
+              1893703.4784000004,
+              5808522.2146
+            ],
+            [
+              1893712.7164000003,
+              5808517.541
+            ],
+            [
+              1893720.3986999998,
+              5808513.7335
+            ],
+            [
+              1893735.875,
+              5808506.3426
+            ],
+            [
+              1893736.4179999996,
+              5808506.799
+            ],
+            [
+              1893739.074,
+              5808509.4822
+            ],
+            [
+              1893800.7295000004,
+              5808634.0687
+            ],
+            [
+              1893801.6163999997,
+              5808636.8944
+            ],
+            [
+              1893801.4436999997,
+              5808639.9254
+            ],
+            [
+              1893797.3252999997,
+              5808641.7686
+            ],
+            [
+              1893777.8139000004,
+              5808649.9431
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6371,
+      "properties": {
+        "OBJECTID": 6371,
+        "blockid": "758614042022J1",
+        "name": "1",
+        "surveydate": 1649721600000,
+        "surveyed": "Yes",
+        "method": "RTK",
+        "numberofrows": 63,
+        "structuretype": "Pergola",
+        "growmethod": "CK",
+        "blocklayout": "Opposing Female",
+        "coverstatus": "Uncovered",
+        "coverdate": null,
+        "organicstatus": null,
+        "varietyid": 1,
+        "varietynameprivate": "Hayward",
+        "varietynamepublic": "Hayward",
+        "varietynamepublicshort": "HW",
+        "graftdate": 1625171440617,
+        "notchvarietyid": null,
+        "notchvarietynameprivate": null,
+        "notchvarietynamepublic": null,
+        "notchvarietynamepublicshort": null,
+        "notchvarietygraftdate": null,
+        "symbology": "HW",
+        "latitudedms": "38°7'32.19\"S",
+        "longitudedms": "175°14'6.49\"E",
+        "latitudedd": "-38.125609161401115",
+        "longitudedd": "175.23513551733498",
+        "areasm": "28784",
+        "areahectares": "2.88",
+        "supplyarea": null,
+        "category": "Kiwifruit",
+        "productionstatus": "Newly Grafted/Immature Vines",
+        "startdate": 1651539165825,
+        "grafttype": null,
+        "globalid": "{5A93A7CE-BCF4-406B-9222-6336E7715C69}",
+        "created_date": 1651539166380,
+        "last_edited_date": 1747101907140,
+        "varietyedi": "HW",
+        "notchvarietyedi": null,
+        "propertyname": "Flossy's Orchard",
+        "kpin": "7586",
+        "Shape_Length": 683.9197070270925,
+        "Shape_Area": 28783.508645297323
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1795996.9175000004,
+              5777874.9857
+            ],
+            [
+              1796017.5351,
+              5777911.7097
+            ],
+            [
+              1796017.8181999996,
+              5777913.3622
+            ],
+            [
+              1796015.9757000003,
+              5777917.5032
+            ],
+            [
+              1796013.9445000002,
+              5777921.5843
+            ],
+            [
+              1795828.6868000003,
+              5778017.9013
+            ],
+            [
+              1795825.1290999996,
+              5778013.2046
+            ],
+            [
+              1795819.5883999998,
+              5778002.6757
+            ],
+            [
+              1795818.2242,
+              5777998.0228
+            ],
+            [
+              1795817.9171000002,
+              5777989.8647
+            ],
+            [
+              1795818.3663999997,
+              5777983.841
+            ],
+            [
+              1795814.4660999998,
+              5777969.2162
+            ],
+            [
+              1795810.3974000001,
+              5777955.181
+            ],
+            [
+              1795794.3984000003,
+              5777897.8803
+            ],
+            [
+              1795792.8952000001,
+              5777888.8267
+            ],
+            [
+              1795791.6535,
+              5777887.733
+            ],
+            [
+              1795789.0367,
+              5777881.2465
+            ],
+            [
+              1795939.3657999998,
+              5777796.5131
+            ],
+            [
+              1795939.3106000004,
+              5777796.4518
+            ],
+            [
+              1795942.8655000003,
+              5777794.573
+            ],
+            [
+              1795946.5738000004,
+              5777800.3558
+            ],
+            [
+              1795949.5064000003,
+              5777805.6729
+            ],
+            [
+              1795952.2351000002,
+              5777810.2367
+            ],
+            [
+              1795957.0384,
+              5777812.7601
+            ],
+            [
+              1795969.0881000003,
+              5777819.6911
+            ],
+            [
+              1795975.148,
+              5777823.189
+            ],
+            [
+              1795976.6283999998,
+              5777824.6804
+            ],
+            [
+              1795991.2730999999,
+              5777850.5892
+            ],
+            [
+              1795991.8327000001,
+              5777852.5038
+            ],
+            [
+              1795994.6610000003,
+              5777864.7614
+            ],
+            [
+              1795995.8419000003,
+              5777873.4157
+            ],
+            [
+              1795996.9175000004,
+              5777874.9857
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
